@@ -57,6 +57,13 @@ functions:
           path: subscribe
           method: post
           cors: true
+  staticMailer:
+    handler: handler/staticMailer.staticMailer
+    events:
+      - http:
+          path: static-mailer
+          method: post
+          cors: true
 
 resources:
   Resources:
