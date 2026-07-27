@@ -19,6 +19,12 @@ provider:
     role:
       statements:
         - Effect: Allow
+          Action: SNS:Publish
+          Resource: !Ref QuotesMessages
+        - Effect: Allow
+          Action: "s3:*"
+          Resource: "*"
+        - Effect: Allow
           Action:
             - dynamodb:Query
             - dynamodb:Scan
