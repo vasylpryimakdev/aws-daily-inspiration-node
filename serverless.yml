@@ -49,6 +49,13 @@ functions:
           path: quotes
           method: get
           cors: true
+  subscribe:
+    handler: handler/subscribeUser.subscribeUser
+    events:
+      - http:
+          path: subscribe
+          method: post
+          cors: true
 
 resources:
   Resources:
