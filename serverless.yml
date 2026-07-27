@@ -7,11 +7,14 @@ stages:
   default:
     params:
       tableName: "users-table-${sls:stage}"
+      region: ${self:provider.region}
 
 provider:
   name: aws
   runtime: nodejs24.x
   architecture: arm64
+  region: us-east-1
+  stage: dev
   # Uncomment to easily set up a custom domain. Read the docs for more details:
   # https://www.serverless.com/framework/docs/providers/aws/guide/domains
   # domain: api.example.com
@@ -20,7 +23,7 @@ provider:
       statements:
         - Effect: Allow
           Action: SNS:Publish
-          Resource: !Ref QuotesMessages
+          Resource: "*"
         - Effect: Allow
           Action: "s3:*"
           Resource: "*"
@@ -36,12 +39,16 @@ provider:
             - Fn::GetAtt: [UsersTable, Arn]
   environment:
     USERS_TABLE: ${param:tableName}
+    REGION: ${self:provider.region}
 
 functions:
-  api:
-    handler: handler.handler
+  quotes:
+    handler: handler/getQuotes.getQuotes
     events:
-      - httpApi: "*"
+      - http:
+          path: quotes
+          method: get
+          cors: true
 
 resources:
   Resources:
