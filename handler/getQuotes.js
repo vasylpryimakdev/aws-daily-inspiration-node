@@ -1,10 +1,10 @@
-import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3");
 
 const s3 = new S3Client({
   region: process.env.AWS_REGION || process.env.REGION,
 });
 
-export const getQuotes = async (event) => {
+module.exports.getQuotes = async (event) => {
   console.log("Incoming:", event);
 
   try {
@@ -29,7 +29,7 @@ export const getQuotes = async (event) => {
       body: JSON.stringify(json),
     };
   } catch (error) {
-    console.error(error);
+    console.error("Get quotes error:", error);
 
     return {
       statusCode: 500,

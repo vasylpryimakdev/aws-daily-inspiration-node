@@ -1,12 +1,18 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, ScanCommand } from "@aws-sdk/lib-dynamodb";
+const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
+const {
+  DynamoDBDocumentClient,
+  ScanCommand,
+} = require("@aws-sdk/lib-dynamodb");
 
-const client = new DynamoDBClient({});
+const client = new DynamoDBClient({
+  region: process.env.AWS_REGION || process.env.REGION,
+});
+
 const dynamoDb = DynamoDBDocumentClient.from(client);
 
 const USERS_TABLE = process.env.USERS_TABLE;
 
-export const getSubscribers = async () => {
+module.exports.getSubscribers = async () => {
   try {
     const { Items } = await dynamoDb.send(
       new ScanCommand({
@@ -16,6 +22,10 @@ export const getSubscribers = async () => {
 
     return {
       statusCode: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
       body: JSON.stringify(Items),
     };
   } catch (error) {
@@ -23,6 +33,10 @@ export const getSubscribers = async () => {
 
     return {
       statusCode: 500,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
       body: JSON.stringify({
         message: "Failed to get subscribers",
         error: error.message,

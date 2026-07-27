@@ -1,11 +1,11 @@
-import sgMail from "@sendgrid/mail";
-import axios from "axios";
+const sgMail = require("@sendgrid/mail");
+const axios = require("axios");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const API_URL = process.env.API_URL;
 
-export const sendEmail = async () => {
+module.exports.sendEmail = async () => {
   try {
     const [quote, subscribers] = await Promise.all([
       getQuote(),
@@ -14,7 +14,7 @@ export const sendEmail = async () => {
 
     const emailHTML = createEmailHTML(quote);
 
-    await sgMail.send({
+    await sgMail.sendMultiple({
       to: subscribers,
       from: {
         email: process.env.SENDER_EMAIL,
@@ -122,7 +122,6 @@ Daily Words of Wisdom
 
 </td>
 </tr>
-
 
 <tr>
 <td style="

@@ -1,6 +1,6 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
-import { randomUUID } from "node:crypto";
+const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
+const { DynamoDBDocumentClient, PutCommand } = require("@aws-sdk/lib-dynamodb");
+const { randomUUID } = require("node:crypto");
 
 const client = new DynamoDBClient({
   region: process.env.AWS_REGION || process.env.REGION,
@@ -10,13 +10,13 @@ const dynamoDb = DynamoDBDocumentClient.from(client);
 
 const USERS_TABLE = process.env.USERS_TABLE;
 
-export const subscribeUser = async (event) => {
+module.exports.subscribeUser = async (event) => {
   try {
     const data = JSON.parse(event.body);
 
     console.log("EVENT:", data);
 
-    if (typeof data.email !== "string") {
+    if (!data.email || typeof data.email !== "string") {
       return {
         statusCode: 400,
         headers: {
@@ -55,7 +55,7 @@ export const subscribeUser = async (event) => {
       body: JSON.stringify(item),
     };
   } catch (error) {
-    console.error(error);
+    console.error("Subscribe user error:", error);
 
     return {
       statusCode: 500,

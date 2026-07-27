@@ -1,4 +1,4 @@
-import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
+const { SNSClient, PublishCommand } = require("@aws-sdk/client-sns");
 
 const sns = new SNSClient({
   region: process.env.AWS_REGION || process.env.REGION,
@@ -11,7 +11,7 @@ Email: ${form.email}
 Service information: ${identity.sourceIp} - ${identity.userAgent}
 `;
 
-export const staticMailer = async (event) => {
+module.exports.staticMailer = async (event) => {
   try {
     console.log("EVENT:", event);
 
@@ -27,18 +27,15 @@ export const staticMailer = async (event) => {
     );
 
     try {
-      const response = await fetch(
-        "https://4g9pgma4m7.execute-api.us-east-1.amazonaws.com/dev/subscribe",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: data.email,
-          }),
+      const response = await fetch(`${process.env.API_URL}/subscribe`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          email: data.email,
+        }),
+      });
 
       console.log("Subscribe status:", response.status);
     } catch (error) {
@@ -56,7 +53,7 @@ export const staticMailer = async (event) => {
       }),
     };
   } catch (error) {
-    console.error(error);
+    console.error("Static mailer error:", error);
 
     return {
       statusCode: 500,
