@@ -39,7 +39,7 @@ provider:
             - Fn::GetAtt: [UsersTable, Arn]
   environment:
     API_URL: https://4g9pgma4m7.execute-api.us-east-1.amazonaws.com/dev
-    SENDGRID_API_KEY: dont-have-yet
+    SENDGRID_API_KEY:  SG.x7K9mP2vQ8rL4nT6yW3aB9cD5eF1gH0jK8lM2nP7qR4sV6
     USERS_TABLE: ${param:tableName}
     REGION: ${self:provider.region}
     SNS_TOPIC_ARN: arn:aws:sns:us-east-1:805493112051:quotes-messages-dev
@@ -72,6 +72,14 @@ functions:
       - http:
           path: sendEmail
           method: post
+          cors: true
+      - schedule: cron(0 13 * * ? *)
+  getSubscribers:
+    handler: handler/getSubscribers.getSubscribers
+    events:
+      - http:
+          path: getSubscribers
+          method: get
           cors: true
 
 resources:
