@@ -23,7 +23,7 @@ provider:
       statements:
         - Effect: Allow
           Action: SNS:Publish
-          Resource: "*"
+          Resource: !Ref QuotesMessages
         - Effect: Allow
           Action: "s3:*"
           Resource: "*"
@@ -40,13 +40,14 @@ provider:
   environment:
     USERS_TABLE: ${param:tableName}
     REGION: ${self:provider.region}
+    SNS_TOPIC_ARN: arn:aws:sns:us-east-1:805493112051:quotes-messages-dev
 
 functions:
   quotes:
     handler: handler/getQuotes.getQuotes
     events:
       - http:
-          path: quotes
+          path: quotes 
           method: get
           cors: true
   subscribe:
@@ -59,6 +60,24 @@ functions:
 
 resources:
   Resources:
+    QuotesMessages:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: quotes-messages-${self:provider.stage}
+
+    QuotesMessagesSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        TopicArn: !Ref QuotesMessages
+        Protocol: email
+        Endpoint: vasyl.pryimak.dev@gmail.com
+        DeliveryPolicy: 
+          healthyRetryPolicy:
+            numRetries: 20
+            minDelayTarget: 30
+            maxDelayTarget: 600
+            backoffFunction: exponential
+  
     UsersTable:
       Type: AWS::DynamoDB::Table
       Properties:
