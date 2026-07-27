@@ -242,7 +242,7 @@ const sendMessage = async (event) => {
   event.preventDefault();
   await axios
     .post(
-      "https://502b9fki3l.execute-api.us-east-1.amazonaws.com/dev/static-mailer",
+      "https://4g9pgma4m7.execute-api.us-east-1.amazonaws.com/dev/static-mailer",
       {
         name: event.target.name.value,
         email: event.target.email.value,
@@ -259,7 +259,7 @@ const sendMessage = async (event) => {
 Home.getInitialProps = async (ctx) => {
   try {
     const res = await axios.get(
-      "https://502b9fki3l.execute-api.us-east-1.amazonaws.com/dev/quotes"
+      "https://4g9pgma4m7.execute-api.us-east-1.amazonaws.com/dev/quotes"
     );
     const quotes = res.data;
 
